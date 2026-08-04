@@ -967,11 +967,15 @@ async function perguntarClaude(pergunta, dados) {
 
 async function responderTelegram(chatId, texto) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  const resp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: chatId, text: texto })
   });
+  if (!resp.ok) {
+    const errBody = await resp.text();
+    throw new Error("Telegram sendMessage falhou (" + resp.status + "): " + errBody);
+  }
 }
 
 export default async function handler(req, res) {
