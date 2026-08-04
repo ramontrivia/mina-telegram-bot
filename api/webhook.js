@@ -104,9 +104,10 @@ export default async function handler(req, res) {
     res.status(200).send("Bot da pilha de estéril está no ar.");
     return;
   }
+  let msg;
   try {
     const update = req.body;
-    const msg = update.message;
+    msg = update.message;
     if (!msg || !msg.text) {
       res.status(200).json({ ok: true });
       return;
@@ -116,6 +117,13 @@ export default async function handler(req, res) {
     await responderTelegram(msg.chat.id, resposta);
     res.status(200).json({ ok: true });
   } catch (err) {
+    console.error("Erro no webhook:", err);
+    // manda o erro de volta pro Telegram, pra ficar visivel sem precisar olhar logs
+    if (msg && msg.chat) {
+      try {
+        await responderTelegram(msg.chat.id, "Deu erro aqui: " + String(err).slice(0, 300));
+      } catch (e2) { /* se nem isso funcionar, nao tem mais o que fazer */ }
+    }
     res.status(200).json({ ok: true, error: String(err) });
   }
 }
