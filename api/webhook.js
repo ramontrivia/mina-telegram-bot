@@ -28,61 +28,77 @@ const SNAPSHOT_RESERVA = {
     "niveis": [
       {
         "nivel": 7,
-        "capacidade_m3": 63294.4
+        "capacidade_m3": 63294.4,
+        "capacidade_acumulada_m3": 63294.4
       },
       {
         "nivel": 8,
-        "capacidade_m3": 215830.16
+        "capacidade_m3": 215830.16,
+        "capacidade_acumulada_m3": 279124.56
       },
       {
         "nivel": 9,
-        "capacidade_m3": 226734.32
+        "capacidade_m3": 226734.32,
+        "capacidade_acumulada_m3": 505858.88
       },
       {
         "nivel": 10,
-        "capacidade_m3": 309249.2
+        "capacidade_m3": 309249.2,
+        "capacidade_acumulada_m3": 815108.08
       },
       {
         "nivel": 11,
-        "capacidade_m3": 348394.24
+        "capacidade_m3": 348394.24,
+        "capacidade_acumulada_m3": 1163502.32
       },
       {
         "nivel": 12,
-        "capacidade_m3": 380809.2
+        "capacidade_m3": 380809.2,
+        "capacidade_acumulada_m3": 1544311.52
       },
       {
         "nivel": 13,
-        "capacidade_m3": 403299.28
+        "capacidade_m3": 403299.28,
+        "capacidade_acumulada_m3": 1947610.8
       },
       {
         "nivel": 14,
-        "capacidade_m3": 428926.96
+        "capacidade_m3": 428926.96,
+        "capacidade_acumulada_m3": 2376537.76
       },
       {
         "nivel": 15,
-        "capacidade_m3": 444499.84
+        "capacidade_m3": 444499.84,
+        "capacidade_acumulada_m3": 2821037.6
       },
       {
         "nivel": 16,
-        "capacidade_m3": 470668.56
+        "capacidade_m3": 470668.56,
+        "capacidade_acumulada_m3": 3291706.16
       },
       {
         "nivel": 17,
-        "capacidade_m3": 491854.16
+        "capacidade_m3": 491854.16,
+        "capacidade_acumulada_m3": 3783560.32
       },
       {
         "nivel": 18,
-        "capacidade_m3": 398817.28
+        "capacidade_m3": 398817.28,
+        "capacidade_acumulada_m3": 4182377.6
       },
       {
         "nivel": 19,
-        "capacidade_m3": 300900.96
+        "capacidade_m3": 300900.96,
+        "capacidade_acumulada_m3": 4483278.56
       },
       {
         "nivel": 20,
-        "capacidade_m3": 207589.84
+        "capacidade_m3": 207589.84,
+        "capacidade_acumulada_m3": 4690868.4
       }
-    ]
+    ],
+    "volume_restante_para_completar_nivel_atual_m3": 24182.95,
+    "volume_restante_para_completar_proximo_nivel_m3": 333432.15
   },
   "mensal": {
     "jan": 46800.11,
@@ -941,6 +957,17 @@ async function perguntarClaude(pergunta, dados) {
     "01/01/2026 ate 29/07/2026 — use ele pra responder perguntas sobre uma data " +
     "especifica (ex: 'quanto foi produzido no dia 15/03?'). Se a data perguntada " +
     "nao estiver na serie, diga que nao tem esse dia no registro disponivel. " +
+    "IMPORTANTE sobre os niveis da pilha: cada nivel e preenchido em ordem, do 7 pro " +
+    "20. O campo pilha.niveis[].capacidade_m3 e a capacidade DAQUELE nivel isolado; " +
+    "ja pilha.niveis[].capacidade_acumulada_m3 e a soma de TODOS os niveis desde o 7 " +
+    "ate aquele nivel (inclusive) — e esse valor acumulado que deve ser comparado " +
+    "com pilha.volume_acumulado_m3 pra saber se um nivel ja foi completado ou nao. " +
+    "NUNCA compare volume_acumulado_m3 direto com a capacidade_m3 isolada de um " +
+    "nivel — isso da resultado errado. Os campos " +
+    "pilha.volume_restante_para_completar_nivel_atual_m3 e " +
+    "pilha.volume_restante_para_completar_proximo_nivel_m3 ja vem prontos, calculados " +
+    "corretamente — use eles direto quando perguntarem 'quanto falta pro nivel atual " +
+    "ou pro proximo fechar', em vez de tentar calcular do zero. " +
     "Dados atuais do painel (JSON):\n" + JSON.stringify(dados);
 
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
